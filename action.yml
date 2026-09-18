@@ -1,0 +1,42 @@
+name: 'Syntropy Axe-Core Accessibility CI'
+description: 'Zero-config automated WCAG 2.1/2.2 AA accessibility audit in CI/CD with rich PR annotations and markdown summaries.'
+author: 'Syntropy Digital'
+branding:
+  icon: 'eye'
+  color: 'blue'
+
+inputs:
+  url:
+    description: 'URL to scan (e.g. http://localhost:3000 or staging URL)'
+    required: true
+  standard:
+    description: 'WCAG standard to enforce (wcag2a, wcag2aa, wcag21aa, wcag22aa)'
+    required: false
+    default: 'wcag21aa'
+  fail-on:
+    description: 'Minimum violation severity to fail the CI build (minor, moderate, serious, critical)'
+    required: false
+    default: 'serious'
+  output-json:
+    description: 'Path to save full JSON audit report'
+    required: false
+    default: 'axe-results.json'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Run Axe Core Scanner
+      shell: bash
+      env:
+        SCAN_URL: ${{ inputs.url }}
+        STANDARD: ${{ inputs.standard }}
+        FAIL_ON: ${{ inputs.fail-on }}
+        OUTPUT_JSON: ${{ inputs.output-json }}
+      run: |
+        npx @axe-core/cli "$SCAN_URL" --tags "$STANDARD" --save "$OUTPUT_JSON" || true
+        node ${{ github.action_path }}/dist/summary.js "$OUTPUT_JSON" "$FAIL_ON"
