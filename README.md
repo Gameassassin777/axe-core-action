@@ -11,7 +11,7 @@ Built and maintained by **Syntropy Digital**.
 
 ## Features
 
-- **Inline PR Annotations:** Surface violations with exact CSS selectors and remediation instructions directly on PR line diffs.
+- **Workflow Annotations:** Every violation becomes a GitHub error/warning annotation with its CSS selector and axe's failure summary, visible in the run log and the Checks tab.
 - **Rich Job Summaries:** Automatically generates clean Markdown tables in the GitHub Actions Step Summary.
 - **Configurable Severity Gates:** Fail CI on `critical`, `serious`, or `moderate` issues, or run non-blocking for reporting.
 - **Zero Configuration:** Pre-configured with sensible defaults for fast CI runs.
@@ -37,7 +37,7 @@ jobs:
         run: npm run build && npm run start & npx wait-on http://localhost:3000
 
       - name: Run Syntropy Axe Accessibility Audit
-        uses: SyntropyDigital/axe-core-action@v1
+        uses: Gameassassin777/axe-core-action@v1
         with:
           url: 'http://localhost:3000'
           standard: 'wcag21aa'
