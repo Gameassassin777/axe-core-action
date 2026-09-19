@@ -1,6 +1,7 @@
 ---
 title: A zero-config accessibility gate for GitHub Actions (axe-core, WCAG 2.2, one step)
-published: false
+published: true
+canonical_url: https://dev.to/syntropydigital/a-zero-config-accessibility-gate-for-github-actions-axe-core-wcag-22-one-step-29jf
 tags: accessibility, github, actions, webdev
 ---
 
@@ -25,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npm ci && npm run build && (npm run start &) && npx wait-on http://localhost:3000
-      - uses: Gameassassin777/axe-core-action@v1
+      - uses: syntropydigital/axe-core-action@v1
         with:
           url: http://localhost:3000
           standard: wcag22aa
@@ -47,6 +48,6 @@ Automated checks catch roughly half to two-thirds of accessibility defects (Dequ
 | `fail-on` | `serious` | minimum impact that fails the job |
 | `output-json` | `axe-results.json` | where the full axe report is saved (upload it as an artifact if you want history) |
 
-Source, MIT licence, issues: https://github.com/Gameassassin777/axe-core-action
+Source, MIT licence, issues: https://github.com/syntropydigital/axe-core-action
 
 If you want the manual half of the audit — keyboard flows, screen-reader checks, and code-level fixes for the failures — that is what we do for a living; the README has the contact.

@@ -37,7 +37,7 @@ jobs:
         run: npm run build && npm run start & npx wait-on http://localhost:3000
 
       - name: Run Syntropy Axe Accessibility Audit
-        uses: Gameassassin777/axe-core-action@v1
+        uses: syntropydigital/axe-core-action@v1
         with:
           url: 'http://localhost:3000'
           standard: 'wcag21aa'
