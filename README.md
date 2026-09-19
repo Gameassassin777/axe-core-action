@@ -57,6 +57,10 @@ jobs:
 
 ---
 
+## Services
+
+Automated checks are the floor, not the audit. If you want the manual half — keyboard flows, screen-reader checks, and code-level fixes for the failures this action reports — Syntropy Digital does that work: email **privateeffectivetools@gmail.com** with the repository or URL and the standard you need to meet.
+
 ## License
 
 MIT License. Developed by Syntropy Digital.
