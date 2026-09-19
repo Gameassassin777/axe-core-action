@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Accessible fixture page</title>
+  <style>
+    body { font-family: system-ui, sans-serif; color: #1a1a1a; background: #ffffff; margin: 2rem; }
+    a { color: #0645ad; }
+    button { background: #1a1a1a; color: #ffffff; border: 0; padding: .5rem 1rem; }
+  </style>
+</head>
+<body>
+  <header><h1>Accessible fixture page</h1></header>
+  <main>
+    <p>This page is used by the action's self-test and should produce no WCAG 2.2 AA violations.</p>
+    <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="A single grey pixel used as a placeholder image" width="1" height="1">
+    <form>
+      <label for="email">Email address</label>
+      <input id="email" type="email" name="email" autocomplete="email">
+      <button type="submit">Subscribe</button>
+    </form>
+    <nav aria-label="Footer"><a href="https://github.com/syntropydigital/axe-core-action">Project source</a></nav>
+  </main>
+</body>
+</html>

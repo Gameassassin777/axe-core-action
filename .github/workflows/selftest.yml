@@ -1,0 +1,68 @@
+name: Self-test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  selftest:
+    name: pass / fail / scanner-error paths
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Serve the fixture pages
+        run: |
+          python3 -m http.server 8080 --directory test/fixtures >/dev/null 2>&1 &
+          sleep 1
+          curl -sf http://localhost:8080/pass.html >/dev/null
+
+      - name: Clean page passes the WCAG 2.2 AA gate
+        uses: ./
+        with:
+          url: http://localhost:8080/pass.html
+          standard: wcag22aa
+          fail-on: serious
+          output-json: pass-results.json
+
+      - name: Broken page is expected to fail the gate
+        id: broken
+        continue-on-error: true
+        uses: ./
+        with:
+          url: http://localhost:8080/fail.html
+          standard: wcag22aa
+          fail-on: serious
+          output-json: fail-results.json
+
+      - name: Assert the broken page failed
+        if: steps.broken.outcome != 'failure'
+        run: |
+          echo "::error::fail.html did not fail the gate (outcome: ${{ steps.broken.outcome }})"
+          exit 1
+
+      - name: Unreachable URL is expected to fail (scanner error, not a silent pass)
+        id: unreachable
+        continue-on-error: true
+        uses: ./
+        with:
+          url: http://localhost:8081/nothing.html
+          output-json: none-results.json
+
+      - name: Assert the unreachable URL failed
+        if: steps.unreachable.outcome != 'failure'
+        run: |
+          echo "::error::an unreachable URL did not fail the gate (outcome: ${{ steps.unreachable.outcome }})"
+          exit 1
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-reports
+          path: |
+            pass-results.json
+            fail-results.json
+          if-no-files-found: ignore

@@ -38,5 +38,11 @@ runs:
         FAIL_ON: ${{ inputs.fail-on }}
         OUTPUT_JSON: ${{ inputs.output-json }}
       run: |
-        npx @axe-core/cli "$SCAN_URL" --tags "$STANDARD" --save "$OUTPUT_JSON" || true
-        node ${{ github.action_path }}/dist/summary.js "$OUTPUT_JSON" "$FAIL_ON"
+        # GitHub-hosted runners expose a ChromeDriver that matches the preinstalled Chrome via
+        # $CHROMEWEBDRIVER; use it when present so the driver and browser versions cannot drift.
+        DRIVER_ARGS=()
+        if [ -n "${CHROMEWEBDRIVER:-}" ] && [ -x "$CHROMEWEBDRIVER/chromedriver" ]; then
+          DRIVER_ARGS=(--chromedriver-path "$CHROMEWEBDRIVER/chromedriver")
+        fi
+        npx --yes @axe-core/cli "$SCAN_URL" --tags "$STANDARD" --save "$OUTPUT_JSON" "${DRIVER_ARGS[@]}" || true
+        node "${{ github.action_path }}/dist/summary.js" "$OUTPUT_JSON" "$FAIL_ON"
