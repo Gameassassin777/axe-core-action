@@ -44,5 +44,16 @@ runs:
         if [ -n "${CHROMEWEBDRIVER:-}" ] && [ -x "$CHROMEWEBDRIVER/chromedriver" ]; then
           DRIVER_ARGS=(--chromedriver-path "$CHROMEWEBDRIVER/chromedriver")
         fi
-        npx --yes @axe-core/cli "$SCAN_URL" --tags "$STANDARD" --save "$OUTPUT_JSON" "${DRIVER_ARGS[@]}" || true
+        # axe runs a rule when it carries ANY listed tag, and WCAG levels are cumulative, so a
+        # "wcag22aa" gate must include the 2.0/2.1 A and AA rule sets, not just the rules new in 2.2.
+        case "$STANDARD" in
+          wcag2a)   TAGS="wcag2a" ;;
+          wcag2aa)  TAGS="wcag2a,wcag2aa" ;;
+          wcag21a)  TAGS="wcag2a,wcag21a" ;;
+          wcag21aa) TAGS="wcag2a,wcag2aa,wcag21a,wcag21aa" ;;
+          wcag22a)  TAGS="wcag2a,wcag21a,wcag22a" ;;
+          wcag22aa) TAGS="wcag2a,wcag2aa,wcag21a,wcag21aa,wcag22a,wcag22aa" ;;
+          *) echo "::error::unknown standard '$STANDARD' (use wcag2a, wcag2aa, wcag21aa or wcag22aa)"; exit 1 ;;
+        esac
+        npx --yes @axe-core/cli "$SCAN_URL" --tags "$TAGS" --save "$OUTPUT_JSON" "${DRIVER_ARGS[@]}" || true
         node "${{ github.action_path }}/dist/summary.js" "$OUTPUT_JSON" "$FAIL_ON"
